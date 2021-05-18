@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default Color Theme -->
+    <color name="mainColor">#FFDF1233</color>
+    <color name="background">#FF15202B</color>
+    <color name="sideMenu">#FF15202B</color>
+    <color name="primaryText">#FFFFFFFF</color>
+    <color name="secondaryText">#FF8899A6</color>
+    <color name="cards">#FF192734</color>
+    <color name="divider">#FF22303C</color>
+
+</resources>

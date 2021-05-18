@@ -1,0 +1,27 @@
+<resources>
+    <!-- App String -->
+    <string name="app_name">Phone.gg</string>
+    <string name="api_key">RGAPI-15aa5b93-8eda-49b4-a3db-47e17e571390</string>
+
+    <!-- Home Page String -->
+    <string name="welcomeText">Welcome to</string>
+
+    <!-- Add Summoner Page String -->
+    <string name="summonerNameInput">Summoner name</string>
+    <string name="summonerNotFoundMessage">Summoner Not Found</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string-array name="serverRegion">
+        <item>BR</item>
+        <item>EUN</item>
+        <item>EUW</item>
+        <item>JP</item>
+        <item>KR</item>
+        <item>LA1</item>
+        <item>LA2</item>
+        <item>NA</item>
+        <item>OC</item>
+        <item>RU</item>
+        <item>TR</item>
+    </string-array>
+</resources>
