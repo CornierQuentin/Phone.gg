@@ -11,9 +11,31 @@
         <action
             android:id="@+id/action_homeFragment_to_addSummonerFragment"
             app:destination="@id/addSummonerFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_summonerInformationFragment"
+            app:destination="@id/summonerInformationFragment" />
     </fragment>
     <fragment
         android:id="@+id/addSummonerFragment"
         android:name="fr.cornier.phonegg.AddSummonerPage.AddSummonerFragment"
-        android:label="AddSummonerFragment" />
+        android:label="AddSummonerFragment" >
+        <action
+            android:id="@+id/action_addSummonerFragment_to_summonerInformationFragment"
+            app:destination="@id/summonerInformationFragment" />
+        <action
+            android:id="@+id/action_addSummonerFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/summonerInformationFragment"
+        android:name="fr.cornier.phonegg.SummonerInformation.SummonerInformationFragment"
+        android:label="SummonerInformationFragment" >
+        <argument
+            android:name="summonerAccountId"
+            app:argType="string"
+            android:defaultValue="Test" />
+        <action
+            android:id="@+id/action_summonerInformationFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

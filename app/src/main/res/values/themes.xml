@@ -14,4 +14,15 @@
         <!-- Customize your theme here. -->
         <item name="android:navigationBarColor" tools:targetApi="l">@color/background</item>
     </style>
+
+    <style name="Widget.Slopes.TextInputLayout.Spinner" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.TextInputLayout</item>
+        ...
+    </style>
+
+    <style name="ThemeOverlay.App.TextInputLayout" parent="">
+        <item name="colorSurface">@color/background</item>
+        ...
+    </style>
+
 </resources>

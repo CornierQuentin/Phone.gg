@@ -8,5 +8,6 @@
     <color name="secondaryText">#FF8899A6</color>
     <color name="cards">#FF192734</color>
     <color name="divider">#FF22303C</color>
+    <color name="error">#FFB00020</color>
 
 </resources>

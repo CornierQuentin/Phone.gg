@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import fr.cornier.phonegg.Summoner
 import fr.cornier.phonegg.databinding.FragmentHomeBinding
+import io.realm.Realm
 
 class HomeFragment : Fragment() {
 
@@ -21,6 +23,8 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    lateinit var realm:Realm
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,9 +37,20 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        configureRecyclerView()
+    }
+
+    fun configureRecyclerView() {
+        realm = Realm.getDefaultInstance()
+
+        val summonerList = realm.where(Summoner::class.java).findAll()
+
         // Configure and initialise the recyclerView which display the available summoners and
         // the button to add a new summoner
-        binding.summonerList.adapter = SummonerAdapter(0, this)
+
+        val summonerAdapter = SummonerAdapter(summonerList.size, summonerList, this)
+
+        binding.summonerList.adapter = summonerAdapter
         binding.summonerList.layoutManager = LinearLayoutManager(activity)
     }
 

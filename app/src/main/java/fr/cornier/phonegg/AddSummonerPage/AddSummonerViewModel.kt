@@ -1,10 +1,12 @@
 package fr.cornier.phonegg.AddSummonerPage
 
+import android.graphics.Bitmap
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.volley.Request
 import com.android.volley.RequestQueue
+import com.android.volley.toolbox.ImageRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import fr.cornier.phonegg.R
@@ -40,17 +42,40 @@ class AddSummonerViewModel : ViewModel() {
         val apiKey = activityContext?.getString(R.string.api_key)
 
         // Prepare the url for the request, changing the region, the summoner name and the Api Key
-        val url = "https://$region.api.riotgames.com/lol/summoner/v4/summoners/by-name/$summonerName?api_key=$apiKey"
+        val summonerRequestUrl = "https://$region.api.riotgames.com/lol/summoner/v4/summoners/by-name/$summonerName?api_key=$apiKey"
 
         // Prepare the GET request with the url and if it succeed, change summonerInformation
         // value to the JSON response and if it fail change summonerInformation to null
-        val summonerRequest = JsonObjectRequest(Request.Method.GET, url, null, { summonerJSON ->
+        val summonerRequest = JsonObjectRequest(Request.Method.GET, summonerRequestUrl, null, { summonerJSON ->
             summonerInformation.value = summonerJSON
+
+            // Get "profileIconId" value of the JSON
+            val summonerIconId = summonerJSON.getInt("profileIconId")
+
+            // Prepare the url for the request, changing the summoner icon id
+            val iconUrl = "http://ddragon.leagueoflegends.com/cdn/11.10.1/img/profileicon/$summonerIconId.png"
+
+            // Prepare the GET request with the url and if it succeed, change summonerIcon
+            // value to the bitmap response and if it fail change summonerIcon to null
+            val summonerIconRequest = ImageRequest(
+                iconUrl,
+                {bitmap ->
+                    summonerIcon.value = bitmap
+                },0,0,null,null,
+                {
+                    summonerIcon.value = null
+                }
+            )
+
+            // Add the summonerIconRequest to the request Queue
+            requestQueue.add(summonerIconRequest)
+
         }, {
             summonerInformation.value = null
+            summonerIcon.value = null
         })
 
-        // Add the request to the request Queue
+        // Add the summonerRequest to the request Queue
         requestQueue.add(summonerRequest)
     }
 
@@ -66,6 +91,12 @@ class AddSummonerViewModel : ViewModel() {
         region = regionList[position]
     }
 
+    fun getRegion(): String {
+        return region
+    }
+
     // Create observable variable
     val summonerInformation = MutableLiveData<JSONObject>()
+
+    val summonerIcon = MutableLiveData<Bitmap>()
 }
