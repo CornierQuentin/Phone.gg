@@ -10,4 +10,18 @@
     <color name="divider">#FF22303C</color>
     <color name="error">#FFB00020</color>
 
+    <color name="iron">#594d4f</color>
+    <color name="bronze">#89553a</color>
+    <color name="silver">#7f969d</color>
+    <color name="gold">#ca8937</color>
+    <color name="platinum">#549693</color>
+    <color name="diamond">#566bcf</color>
+    <color name="master">#9d47e3</color>
+    <color name="grandmaster">#d04446</color>
+    <color name="challenger">#44bee1</color>
+
+    <color name="highWinRate">#1C8AD5</color>
+    <color name="lowWinRate">#D81E1E</color>
+    <color name="middleWinRate">#9A9A9A</color>
+
 </resources>

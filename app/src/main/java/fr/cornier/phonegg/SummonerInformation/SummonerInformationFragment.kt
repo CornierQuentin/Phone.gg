@@ -52,6 +52,8 @@ class SummonerInformationFragment : Fragment() {
         viewModel.summonerMainInformation.observe(requireActivity(), { summonerMainInformation -> showMainInformation(summonerMainInformation) })
         viewModel.summonerIcon.observe(requireActivity(), { summonerIcon -> setIcon(summonerIcon) })
         viewModel.summonerRankBorder.observe(requireActivity(), { summonerRankBorder -> setIconRankBorder(summonerRankBorder) })
+        viewModel.summonerRankIcon.observe(requireActivity(), { summonerRankIcon -> setIconRankIcon(summonerRankIcon) })
+        viewModel.summonerRankBorderSword.observe(requireActivity(), { summonerRankBorderSword -> setIconRankBorderSword(summonerRankBorderSword) })
         viewModel.summonerRankBorderCrown.observe(requireActivity(), { summonerRankBorderCrown -> setIconRankBorderCrown(summonerRankBorderCrown) })
         viewModel.summonerRankBorderWing.observe(requireActivity(), { summonerRankBorderWing -> setIconRankBorderWing(summonerRankBorderWing) })
         viewModel.summonerRankBorderSecondWing.observe(requireActivity(), { summonerRankBorderSecondWing -> setIconRankBorderSecondWing(summonerRankBorderSecondWing) })
@@ -64,8 +66,101 @@ class SummonerInformationFragment : Fragment() {
         viewModel.mastery1Points.observe(requireActivity(), { mastery1Points -> setMastery1Points(mastery1Points) })
         viewModel.mastery2Points.observe(requireActivity(), { mastery2Points -> setMastery2Points(mastery2Points) })
         viewModel.mastery3Points.observe(requireActivity(), { mastery3Points -> setMastery3Points(mastery3Points) })
+        viewModel.divText.observe(requireActivity(), { divText -> setDivText(divText) })
+        viewModel.divTextColor.observe(requireActivity(), { divTextColor -> setDivTextColor(divTextColor) })
+        viewModel.lp.observe(requireActivity(), { lp -> setLPText(lp) })
+        viewModel.winLoseRation.observe(requireActivity(), { winLoseRation -> setWinLoseRationText(winLoseRation) })
+        viewModel.winrate.observe(requireActivity(), { winrate -> setWinrateText(winrate) })
+        viewModel.winrateColor.observe(requireActivity(), { winrateColor -> setWinrateColor(winrateColor) })
+
+        viewModel.unranked.observe(requireActivity(), { unranked -> setUnrankedTextVisibility(unranked) })
+        viewModel.noMasteries.observe(requireActivity(), { noMasteries -> setNoMasteriesTextVisibility(noMasteries)})
 
         viewModel.getSummonerMainInformation(args.summonerAccountId, activity)
+    }
+
+    private fun setWinrateColor(winrateColor: Int?) {
+        if (winrateColor != null) {
+            binding.winrate.setTextColor(ContextCompat.getColor(requireContext(), winrateColor))
+        } else {
+            binding.winrate.setTextColor(null)
+        }
+    }
+
+    private fun setWinrateText(winrate: String?) {
+        if (winrate != null) {
+            binding.winrate.text = winrate
+        } else {
+            binding.winrate.text = null
+        }
+    }
+
+    private fun setWinLoseRationText(winLoseRation: String?) {
+        if (winLoseRation != null) {
+            binding.winLoseRation.text = winLoseRation
+        } else {
+            binding.winLoseRation.text = null
+        }
+    }
+
+    private fun setLPText(lp: String?) {
+        if (lp != null) {
+            binding.LPNumber.text = lp
+        } else {
+            binding.LPNumber.text = null
+        }
+    }
+
+    private fun setDivTextColor(divTextColor: Int?) {
+        if (divTextColor != null) {
+            binding.DivText.setTextColor(ContextCompat.getColor(requireContext(), divTextColor))
+        } else {
+            binding.DivText.setTextColor(null)
+        }
+    }
+
+    private fun setNoMasteriesTextVisibility(noMasteries: Boolean?) {
+        if (noMasteries != null) {
+            if (noMasteries) {
+                binding.noMasteriesText.visibility = View.VISIBLE
+            } else {
+                binding.noMasteriesText.visibility = View.INVISIBLE
+            }
+        }
+    }
+
+    private fun setDivText(divText: String?) {
+        if (divText != null) {
+            binding.DivText.text = divText
+        } else {
+            binding.DivText.text = null
+        }
+    }
+
+    private fun setIconRankBorderSword(summonerRankBorderSword: Bitmap?) {
+        if (summonerRankBorderSword != null) {
+            binding.rankIconSword.setImageBitmap(summonerRankBorderSword)
+        } else {
+            binding.rankIconSword.setImageBitmap(null)
+        }
+    }
+
+    private fun setIconRankIcon(summonerRankIcon: Bitmap?) {
+        if (summonerRankIcon != null) {
+            binding.rankIcon.setImageBitmap(summonerRankIcon)
+        } else {
+            binding.rankIcon.setImageBitmap(null)
+        }
+    }
+
+    private fun setUnrankedTextVisibility(unranked: Boolean?) {
+        if (unranked != null) {
+            if (unranked) {
+                binding.unrankedText.visibility = View.VISIBLE
+            } else {
+                binding.unrankedText.visibility = View.INVISIBLE
+            }
+        }
     }
 
     private fun setMastery3Points(mastery3Points: Int?) {
@@ -149,24 +244,30 @@ class SummonerInformationFragment : Fragment() {
     private fun setIconRankBorderSecondWing(summonerRankBorderSecondWing: Bitmap?) {
         if (summonerRankBorderSecondWing != null) {
             binding.rankBorderSecondWing.setImageBitmap(summonerRankBorderSecondWing)
+            binding.rankIconSecondWing.setImageBitmap(summonerRankBorderSecondWing)
         } else {
             binding.rankBorderSecondWing.setImageBitmap(null)
+            binding.rankIconSecondWing.setImageBitmap(null)
         }
     }
 
     private fun setIconRankBorderWing(summonerRankBorderWing: Bitmap?) {
         if (summonerRankBorderWing != null) {
             binding.rankBorderWing.setImageBitmap(summonerRankBorderWing)
+            binding.rankIconWing.setImageBitmap(summonerRankBorderWing)
         } else {
             binding.rankBorderWing.setImageBitmap(null)
+            binding.rankIconWing.setImageBitmap(null)
         }
     }
 
     private fun setIconRankBorderCrown(summonerRankBorderCrown: Bitmap?) {
         if (summonerRankBorderCrown != null) {
             binding.rankBorderCrown.setImageBitmap(summonerRankBorderCrown)
+            binding.rankIconCrown.setImageBitmap(summonerRankBorderCrown)
         } else {
             binding.rankBorderCrown.setImageBitmap(null)
+            binding.rankIconCrown.setImageBitmap(null)
         }
     }
 

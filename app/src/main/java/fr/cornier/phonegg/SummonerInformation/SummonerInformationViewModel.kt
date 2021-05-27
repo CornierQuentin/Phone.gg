@@ -16,8 +16,12 @@ import fr.cornier.phonegg.Summoner
 import io.realm.Realm
 import org.json.JSONArray
 import org.json.JSONObject
+import java.lang.Math.round
+import kotlin.math.roundToInt
 
 class SummonerInformationViewModel : ViewModel() {
+
+    infix fun Int.fdiv(i: Int): Double = this / i.toDouble();
 
     private lateinit var requestQueue: RequestQueue
 
@@ -48,8 +52,6 @@ class SummonerInformationViewModel : ViewModel() {
                 val iconUrl = "http://ddragon.leagueoflegends.com/cdn/11.10.1/img/profileicon/$summonerIconId.png"
                 val rankUrl = "https://$region.api.riotgames.com/lol/league/v4/entries/by-summoner/$summonerId?api_key=$apiKey"
                 val masteryURL = "https://$region.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/$summonerId?api_key=$apiKey"
-
-                Log.i("Test", rankUrl)
 
                 // Prepare the GET request with the url and if it succeed, change summonerIcon
                 // value to the bitmap response and if it fail change summonerIcon to null
@@ -112,6 +114,8 @@ class SummonerInformationViewModel : ViewModel() {
 
                         if (summonerMasteryJSON.length() >= 1) {
 
+                            noMasteries.value = false
+
                             when {
                                 summonerMasteryJSON.getJSONObject(0)
                                     .getInt("championLevel") == 1 -> {
@@ -151,6 +155,8 @@ class SummonerInformationViewModel : ViewModel() {
                             }
 
                             mastery1Points.value = summonerMasteryJSON.getJSONObject(0).getInt("championPoints")
+                        } else {
+                            noMasteries.value = true
                         }
 
                         if (summonerMasteryJSON.length() >= 2) {
@@ -248,12 +254,32 @@ class SummonerInformationViewModel : ViewModel() {
 
                         if (summonerRankJSON.length() > 0) {
 
-                            var category: String = ""
-                            var subCategory: String = ""
+                            unranked.value = false
 
-                            var tier: String = ""
+                            lp.value = summonerRankJSON.getJSONObject(0).getInt("leaguePoints").toString() + "LP"
 
-                            var wing: String = "sr"
+                            val wins = summonerRankJSON.getJSONObject(0).getInt("wins")
+                            val losses = summonerRankJSON.getJSONObject(0).getInt("losses")
+
+                            winLoseRation.value = wins.toString() + "W-" + losses.toString() + "L"
+                            winrate.value = ((wins fdiv (wins + losses)) * 100).roundToInt().toString() + "%"
+
+                            if (((wins fdiv (wins + losses)) * 100).roundToInt() > 50) {
+                                winrateColor.value = R.color.highWinRate
+                            } else if (((wins fdiv (wins + losses)) * 100).roundToInt() < 50) {
+                                winrateColor.value = R.color.lowWinRate
+                            } else {
+                                winrateColor.value = R.color.middleWinRate
+                            }
+
+                            var category = ""
+                            var subCategory = ""
+                            var tier = ""
+                            var wing = "sr"
+
+                            var rankText = ""
+
+                            var supraMaster = false
 
                             when {
                                 summonerRankJSON.getJSONObject(0).getString("tier") == "IRON" -> {
@@ -262,6 +288,9 @@ class SummonerInformationViewModel : ViewModel() {
                                     subCategory = "iron"
                                     wing = "s"
 
+                                    rankText += "Iron"
+                                    divTextColor.value = R.color.iron
+
                                 }
                                 summonerRankJSON.getJSONObject(0).getString("tier") == "BRONZE" -> {
 
@@ -269,11 +298,17 @@ class SummonerInformationViewModel : ViewModel() {
                                     subCategory = "bronze"
                                     wing = "s"
 
+                                    rankText += "Bronze"
+                                    divTextColor.value = R.color.bronze
+
                                 }
                                 summonerRankJSON.getJSONObject(0).getString("tier") == "SILVER" -> {
 
                                     category = "03_silver"
                                     subCategory = "silver"
+
+                                    rankText += "Silver"
+                                    divTextColor.value = R.color.silver
 
                                 }
                                 summonerRankJSON.getJSONObject(0).getString("tier") == "GOLD" -> {
@@ -281,6 +316,9 @@ class SummonerInformationViewModel : ViewModel() {
                                     category = "04_gold"
                                     subCategory = "gold"
                                     wing = "s"
+
+                                    rankText += "Gold"
+                                    divTextColor.value = R.color.gold
 
                                 }
                                 summonerRankJSON.getJSONObject(0)
@@ -290,6 +328,9 @@ class SummonerInformationViewModel : ViewModel() {
                                     subCategory = "platinum"
                                     wing = "s"
 
+                                    rankText += "Platinum"
+                                    divTextColor.value = R.color.platinum
+
                                 }
                                 summonerRankJSON.getJSONObject(0)
                                     .getString("tier") == "DIAMOND" -> {
@@ -297,11 +338,19 @@ class SummonerInformationViewModel : ViewModel() {
                                     category = "06_diamond"
                                     subCategory = "diamond"
 
+                                    rankText += "Diamond"
+                                    divTextColor.value = R.color.diamond
+
                                 }
                                 summonerRankJSON.getJSONObject(0).getString("tier") == "MASTER" -> {
 
                                     category = "07_master"
                                     subCategory = "master"
+
+                                    rankText += "Master"
+                                    divTextColor.value = R.color.master
+
+                                    supraMaster = true
 
                                 }
                                 summonerRankJSON.getJSONObject(0)
@@ -310,6 +359,11 @@ class SummonerInformationViewModel : ViewModel() {
                                     category = "08_grandmaster"
                                     subCategory = "grandmaster"
 
+                                    rankText += "GrandMaster"
+                                    divTextColor.value = R.color.grandmaster
+
+                                    supraMaster = true
+
                                 }
                                 summonerRankJSON.getJSONObject(0)
                                     .getString("tier") == "CHALLENGER" -> {
@@ -317,42 +371,72 @@ class SummonerInformationViewModel : ViewModel() {
                                     category = "09_challenger"
                                     subCategory = "challenger"
 
-                                }
-                            }
+                                    rankText += "Challenger"
+                                    divTextColor.value = R.color.challenger
 
-                            when {
-                                summonerRankJSON.getJSONObject(0).getString("rank") == "I" -> {
-
-                                    tier = "1"
-
-                                }
-                                summonerRankJSON.getJSONObject(0).getString("rank") == "II" -> {
-
-                                    tier = "2"
-
-                                }
-                                summonerRankJSON.getJSONObject(0).getString("rank") == "III" -> {
-
-                                    tier = "3"
-
-                                }
-                                summonerRankJSON.getJSONObject(0).getString("rank") == "IV" -> {
-
-                                    tier = "4"
+                                    supraMaster = true
 
                                 }
                             }
+
+                            if (!supraMaster) {
+
+                                when {
+                                    summonerRankJSON.getJSONObject(0).getString("rank") == "I" -> {
+
+                                        tier = "1"
+
+                                        rankText += " 1"
+
+                                    }
+                                    summonerRankJSON.getJSONObject(0).getString("rank") == "II" -> {
+
+                                        tier = "2"
+
+                                        rankText += " 2"
+
+                                    }
+                                    summonerRankJSON.getJSONObject(0)
+                                        .getString("rank") == "III" -> {
+
+                                        tier = "3"
+
+                                        rankText += " 3"
+
+                                    }
+                                    summonerRankJSON.getJSONObject(0).getString("rank") == "IV" -> {
+
+                                        tier = "4"
+
+                                        rankText += " 4"
+
+                                    }
+                                }
+                            }
+
+                            divText.value = rankText
 
                             val iconRankBorderUrl =
                                 "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_base.png"
-                            val iconRankBorderCrownUrl =
-                                "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_crown_d$tier.png"
+                            val rankIconUrl =
+                                "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_baseface_matte.png"
+
+                            var iconRankBorderCrownUrl = ""
+
+                            if (!supraMaster) {
+                                iconRankBorderCrownUrl =
+                                    "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_crown_d$tier.png"
+                            } else {
+                                iconRankBorderCrownUrl =
+                                    "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_crown.png"
+                            }
+
                             val iconRankBorderWingUrl =
                                 "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_${wing}1.png"
                             val iconRankBorderSecondWingUrl =
                                 "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_${wing}2.png"
-
-                            Log.i("Test", iconRankBorderCrownUrl)
+                            val iconRankBorderSwordUrl =
+                                "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_${wing}3.png"
 
                             val summonerIconRankBorderCrownUrlRequest = ImageRequest(
                                 iconRankBorderCrownUrl,
@@ -397,6 +481,32 @@ class SummonerInformationViewModel : ViewModel() {
 
                             // Add the summonerIconRequest to the request Queue
                             requestQueue.add(summonerIconRankBorderRequest)
+
+                            val summonerIconRankBorderSwordRequest = ImageRequest(
+                                iconRankBorderSwordUrl,
+                                { bitmap ->
+                                    summonerRankBorderSword.value = bitmap
+                                }, 0, 0, null, null,
+                                { }
+                            )
+
+                            // Add the summonerIconRequest to the request Queue
+                            requestQueue.add(summonerIconRankBorderSwordRequest)
+
+                            val summonerRankIconRequest = ImageRequest(
+                                rankIconUrl,
+                                { bitmap ->
+                                    summonerRankIcon.value = bitmap
+                                }, 0, 0, null, null,
+                                { }
+                            )
+
+                            // Add the summonerIconRequest to the request Queue
+                            requestQueue.add(summonerRankIconRequest)
+
+                        } else {
+                            unranked.value = true
+
                         }
                     },
                     {
@@ -418,6 +528,8 @@ class SummonerInformationViewModel : ViewModel() {
     val summonerMainInformation = MutableLiveData<JSONObject>()
     val summonerIcon = MutableLiveData<Bitmap>()
     val summonerRankBorder = MutableLiveData<Bitmap>()
+    val summonerRankIcon = MutableLiveData<Bitmap>()
+    val summonerRankBorderSword = MutableLiveData<Bitmap>()
     val summonerRankBorderCrown = MutableLiveData<Bitmap>()
     val summonerRankBorderWing = MutableLiveData<Bitmap>()
     val summonerRankBorderSecondWing = MutableLiveData<Bitmap>()
@@ -430,4 +542,13 @@ class SummonerInformationViewModel : ViewModel() {
     val mastery1Points = MutableLiveData<Int>()
     val mastery2Points = MutableLiveData<Int>()
     val mastery3Points = MutableLiveData<Int>()
+    val divText = MutableLiveData<String>()
+    val divTextColor = MutableLiveData<Int>()
+    val lp = MutableLiveData<String>()
+    val winLoseRation = MutableLiveData<String>()
+    val winrate = MutableLiveData<String>()
+    val winrateColor = MutableLiveData<Int>()
+
+    val unranked = MutableLiveData<Boolean>()
+    val noMasteries = MutableLiveData<Boolean>()
 }
