@@ -24,4 +24,9 @@
     <color name="lowWinRate">#D81E1E</color>
     <color name="middleWinRate">#9A9A9A</color>
 
+    <color name="lowKDA">#9a8f8d</color>
+    <color name="middleLowKDA">#A1926E</color>
+    <color name="middleHighKDA">#dbb074</color>
+    <color name="highKDA">#DD862F</color>
+
 </resources>

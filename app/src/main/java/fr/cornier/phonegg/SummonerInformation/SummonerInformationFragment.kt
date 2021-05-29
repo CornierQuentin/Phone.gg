@@ -72,11 +72,191 @@ class SummonerInformationFragment : Fragment() {
         viewModel.winLoseRation.observe(requireActivity(), { winLoseRation -> setWinLoseRationText(winLoseRation) })
         viewModel.winrate.observe(requireActivity(), { winrate -> setWinrateText(winrate) })
         viewModel.winrateColor.observe(requireActivity(), { winrateColor -> setWinrateColor(winrateColor) })
+        viewModel.numberLastGames.observe(requireActivity(), { numberLastGames -> setNumberLastGames(numberLastGames) })
+        viewModel.winLoseLastGames.observe(requireActivity(), { winLoseLastGames -> setWinLoseLastGames(winLoseLastGames) })
+        viewModel.firstChamp.observe(requireActivity(), {firstChamp -> setfirsChamp(firstChamp) })
+        viewModel.firstChampWinLose.observe(requireActivity(), {firstChampWinLose -> setfirstChampWinLose(firstChampWinLose) })
+        viewModel.firstChampWinrate.observe(requireActivity(), {firstChampWinrate -> setfirstChampWinrate(firstChampWinrate) })
+        viewModel.firstChampKDA.observe(requireActivity(), {firstChampKDA -> setfirstChampKDA(firstChampKDA) })
+        viewModel.secondChamp.observe(requireActivity(), {secondChamp -> setsecondChamp(secondChamp) })
+        viewModel.secondChampWinLose.observe(requireActivity(), {secondChampWinLose -> setsecondChampWinLose(secondChampWinLose) })
+        viewModel.secondChampWinrate.observe(requireActivity(), {secondChampWinrate -> setssecondChampWinrate(secondChampWinrate) })
+        viewModel.secondChampKDA.observe(requireActivity(), {secondChampKDA -> setsecondChampKDA(secondChampKDA) })
+        viewModel.thirdChamp.observe(requireActivity(), {thirdChamp -> setthirdChamp(thirdChamp) })
+        viewModel.thirdChampWinLose.observe(requireActivity(), {thirdChampWinLose -> setthirdChampWinLose(thirdChampWinLose) })
+        viewModel.thirdChampWinrate.observe(requireActivity(), {thirdChampWinrate -> setthirdChampWinrate(thirdChampWinrate) })
+        viewModel.thirdChampKDA.observe(requireActivity(), {thirdChampKDA -> setthirdChampKDA(thirdChampKDA) })
+        viewModel.firstChampWinrateColor.observe(requireActivity(), { firstChampWinrateColor -> setfirstChampWinrateColor(firstChampWinrateColor) })
+        viewModel.firstChampKDAColor.observe(requireActivity(), { firstChampKDAColor -> setfirstChampKDAColor(firstChampKDAColor) })
+        viewModel.secondChampWinrateColor.observe(requireActivity(), { secondChampWinrateColor -> setsecondChampWinrateColor(secondChampWinrateColor) })
+        viewModel.secondChampKDAColor.observe(requireActivity(), { secondChampKDAColor -> setsecondChampKDAColor(secondChampKDAColor) })
+        viewModel.thirdChampWinrateColor.observe(requireActivity(), { thirdChampWinrateColor -> setthirdChampWinrateColor(thirdChampWinrateColor) })
+        viewModel.thirdChampKDAColor.observe(requireActivity(), { thirdChampKDAColor -> setthirdChampKDAColor(thirdChampKDAColor) })
 
         viewModel.unranked.observe(requireActivity(), { unranked -> setUnrankedTextVisibility(unranked) })
         viewModel.noMasteries.observe(requireActivity(), { noMasteries -> setNoMasteriesTextVisibility(noMasteries)})
 
         viewModel.getSummonerMainInformation(args.summonerAccountId, activity)
+    }
+
+    private fun setthirdChampKDAColor(thirdChampKDAColor: Int?) {
+        if (thirdChampKDAColor != null) {
+            binding.ThirdKDA.setTextColor(ContextCompat.getColor(requireContext(), thirdChampKDAColor))
+        } else {
+            binding.ThirdKDA.setTextColor(null)
+        }
+    }
+
+    private fun setsecondChampKDAColor(secondChampKDAColor: Int?) {
+        if (secondChampKDAColor != null) {
+            binding.SecondKDA.setTextColor(ContextCompat.getColor(requireContext(), secondChampKDAColor))
+        } else {
+            binding.SecondKDA.setTextColor(null)
+        }
+    }
+
+    private fun setfirstChampKDAColor(firstChampKDAColor: Int?) {
+        if (firstChampKDAColor != null) {
+            binding.FirstKDA.setTextColor(ContextCompat.getColor(requireContext(), firstChampKDAColor))
+        } else {
+            binding.FirstKDA.setTextColor(null)
+        }
+    }
+
+    private fun setthirdChampWinrateColor(thirdChampWinrateColor: Int?) {
+        if (thirdChampWinrateColor != null) {
+            binding.ThirdWinrate.setTextColor(ContextCompat.getColor(requireContext(), thirdChampWinrateColor))
+        } else {
+            binding.ThirdWinrate.setTextColor(null)
+        }
+    }
+
+    private fun setsecondChampWinrateColor(secondChampWinrateColor: Int?) {
+        if (secondChampWinrateColor != null) {
+            binding.SecondWinrate.setTextColor(ContextCompat.getColor(requireContext(), secondChampWinrateColor))
+        } else {
+            binding.SecondWinrate.setTextColor(null)
+        }
+    }
+
+    private fun setfirstChampWinrateColor(firstChampWinrateColor: Int?) {
+        if (firstChampWinrateColor != null) {
+            binding.FirstWinrate.setTextColor(ContextCompat.getColor(requireContext(), firstChampWinrateColor))
+        } else {
+            binding.FirstWinrate.setTextColor(null)
+        }
+    }
+
+    private fun setthirdChampKDA(thirdChampKDA: String?) {
+        if (thirdChampKDA != null) {
+            binding.ThirdKDA.text = thirdChampKDA
+        } else {
+            binding.ThirdKDA.text = null
+        }
+    }
+
+    private fun setthirdChampWinrate(thirdChampWinrate: String?) {
+        if (thirdChampWinrate != null) {
+            binding.ThirdWinrate.text = thirdChampWinrate
+        } else {
+            binding.ThirdWinrate.text = null
+        }
+    }
+
+    private fun setthirdChampWinLose(thirdChampWinLose: String?) {
+        if (thirdChampWinLose != null) {
+            binding.ThirdWinLose.text = thirdChampWinLose
+        } else {
+            binding.ThirdWinLose.text = null
+        }
+    }
+
+    private fun setsecondChampKDA(secondChampKDA: String?) {
+        if (secondChampKDA != null) {
+            binding.SecondKDA.text = secondChampKDA
+        } else {
+            binding.SecondKDA.text = null
+        }
+    }
+
+    private fun setssecondChampWinrate(secondChampWinrate: String?) {
+        if (secondChampWinrate != null) {
+            binding.SecondWinrate.text = secondChampWinrate
+        } else {
+            binding.SecondWinrate.text = null
+        }
+    }
+
+    private fun setsecondChampWinLose(secondChampWinLose: String?) {
+        if (secondChampWinLose != null) {
+            binding.SecondWinLose.text = secondChampWinLose
+        } else {
+            binding.SecondWinLose.text = null
+        }
+    }
+
+    private fun setfirstChampKDA(firstChampKDA: String?) {
+        if (firstChampKDA != null) {
+            binding.FirstKDA.text = firstChampKDA
+        } else {
+            binding.FirstKDA.text = null
+        }
+    }
+
+    private fun setfirstChampWinrate(firstChampWinrate: String?) {
+        if (firstChampWinrate != null) {
+            binding.FirstWinrate.text = firstChampWinrate
+        } else {
+            binding.FirstWinrate.text = null
+        }
+    }
+
+    private fun setfirstChampWinLose(firstChampWinLose: String?) {
+        if (firstChampWinLose != null) {
+            binding.FirstWinLose.text = firstChampWinLose
+        } else {
+            binding.FirstWinLose.text = null
+        }
+    }
+
+    private fun setthirdChamp(thirdChamp: Bitmap?) {
+        if (thirdChamp != null) {
+            binding.ThirdChamp.setImageBitmap(thirdChamp)
+        } else {
+            binding.ThirdChamp.setImageBitmap(null)
+        }
+    }
+
+    private fun setsecondChamp(secondChamp: Bitmap?) {
+        if (secondChamp != null) {
+            binding.SecondChamp.setImageBitmap(secondChamp)
+        } else {
+            binding.SecondChamp.setImageBitmap(null)
+        }
+    }
+
+    private fun setfirsChamp(firstChamp: Bitmap?) {
+        if (firstChamp != null) {
+            binding.FirstChamp.setImageBitmap(firstChamp)
+        } else {
+            binding.FirstChamp.setImageBitmap(null)
+        }
+    }
+
+    private fun setWinLoseLastGames(winLoseLastGames: String?) {
+        if (winLoseLastGames != null) {
+            binding.WinLoseLastGame.text = winLoseLastGames
+        } else {
+            binding.WinLoseLastGame.text = null
+        }
+    }
+
+    private fun setNumberLastGames(numberLastGames: String?) {
+        if (numberLastGames != null) {
+            binding.LastGameNumber.text = numberLastGames
+        } else {
+            binding.LastGameNumber.text = null
+        }
     }
 
     private fun setWinrateColor(winrateColor: Int?) {

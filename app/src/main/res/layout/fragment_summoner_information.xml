@@ -52,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="110dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="28dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/summoner_display_shape"
         android:elevation="1dp"
@@ -61,31 +61,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/homeButton"
         app:layout_constraintVertical_bias="0.0">
-
-        <TextView
-            android:id="@+id/SummonerName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/primaryText"
-            android:textSize="26sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/SummonerIcon"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/SummonerIcon"
-            android:layout_width="53dp"
-            android:layout_height="53dp"
-            app:civ_border_color="@color/divider"
-            app:civ_border_width="2dp"
-            app:layout_constraintBottom_toBottomOf="@+id/rankBorder"
-            app:layout_constraintTop_toTopOf="@+id/rankBorder"
-            app:layout_constraintEnd_toEndOf="@+id/rankBorder"
-            app:layout_constraintStart_toStartOf="@+id/rankBorder"
-            app:layout_constraintVertical_bias="0.53"
-            tools:layout_editor_absoluteX="32dp" />
 
         <ImageView
             android:id="@+id/rankBorderWing"
@@ -128,20 +103,45 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/SummonerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primaryText"
+            android:textSize="26sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/SummonerIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <TextView
             android:id="@+id/summonerLevel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/summoner_level_display_shape"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="2dp"
             android:textAlignment="center"
             android:textColor="@color/primaryText"
             android:textSize="14sp"
-            android:paddingHorizontal="4dp"
-            android:paddingVertical="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/SummonerIcon"
             app:layout_constraintStart_toStartOf="@+id/SummonerIcon"
             app:layout_constraintTop_toTopOf="@+id/SummonerIcon"
             app:layout_constraintVertical_bias="0.85" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/SummonerIcon"
+            android:layout_width="53dp"
+            android:layout_height="53dp"
+            app:civ_border_color="@color/divider"
+            app:civ_border_width="2dp"
+            app:layout_constraintBottom_toBottomOf="@+id/rankBorder"
+            app:layout_constraintEnd_toEndOf="@+id/rankBorder"
+            app:layout_constraintStart_toStartOf="@+id/rankBorder"
+            app:layout_constraintTop_toTopOf="@+id/rankBorder"
+            app:layout_constraintVertical_bias="0.53"
+            tools:layout_editor_absoluteX="32dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -406,6 +406,206 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/DivText"
             app:layout_constraintTop_toTopOf="@+id/DivText" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/SummonerHistoryDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/summoner_display_shape"
+        android:elevation="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SummonerRankDisplay"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/LastGameNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/secondaryText"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.07"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.3" />
+
+        <TextView
+            android:id="@+id/WinLoseLastGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primaryText"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/LastGameNumber"
+            app:layout_constraintStart_toStartOf="@+id/LastGameNumber"
+            app:layout_constraintTop_toBottomOf="@+id/LastGameNumber"
+            app:layout_constraintVertical_bias="0.16000003" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/FirstChamp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="28dp"
+            app:civ_border_color="@color/divider"
+            app:civ_border_width="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/WinLoseLastGame"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.6" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/SecondChamp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            app:civ_border_color="@color/divider"
+            app:civ_border_width="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ThirdChamp"
+            app:layout_constraintStart_toEndOf="@+id/FirstChamp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.6" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ThirdChamp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="28dp"
+            app:civ_border_color="@color/divider"
+            app:civ_border_width="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/FirstChamp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.6" />
+
+        <TextView
+            android:id="@+id/FirstWinLose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textColor="@color/secondaryText"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/FirstChamp"
+            app:layout_constraintEnd_toEndOf="@+id/FirstChamp"
+            app:layout_constraintStart_toStartOf="@+id/FirstChamp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/FirstWinrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:textColor="@color/primaryText"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/FirstWinLose"
+            app:layout_constraintEnd_toEndOf="@+id/FirstWinLose"
+            app:layout_constraintStart_toStartOf="@+id/FirstWinLose"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/FirstKDA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/primaryText"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/FirstChamp"
+            app:layout_constraintStart_toStartOf="@+id/FirstChamp"
+            app:layout_constraintTop_toBottomOf="@+id/FirstChamp"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/SecondWinLose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textColor="@color/secondaryText"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/SecondChamp"
+            app:layout_constraintEnd_toEndOf="@+id/SecondChamp"
+            app:layout_constraintStart_toStartOf="@+id/SecondChamp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/SecondWinrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:textColor="@color/primaryText"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/SecondWinLose"
+            app:layout_constraintEnd_toEndOf="@+id/SecondWinLose"
+            app:layout_constraintStart_toStartOf="@+id/SecondWinLose"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/SecondKDA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/primaryText"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/SecondChamp"
+            app:layout_constraintStart_toStartOf="@+id/SecondChamp"
+            app:layout_constraintTop_toBottomOf="@+id/SecondChamp"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/ThirdWinLose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textColor="@color/secondaryText"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/ThirdChamp"
+            app:layout_constraintEnd_toEndOf="@+id/ThirdChamp"
+            app:layout_constraintStart_toStartOf="@+id/ThirdChamp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/ThirdWinrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:textColor="@color/primaryText"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/ThirdWinLose"
+            app:layout_constraintEnd_toEndOf="@+id/ThirdWinLose"
+            app:layout_constraintStart_toStartOf="@+id/ThirdWinLose"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/ThirdKDA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/primaryText"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/ThirdChamp"
+            app:layout_constraintStart_toStartOf="@+id/ThirdChamp"
+            app:layout_constraintTop_toBottomOf="@+id/ThirdChamp"
+            app:layout_constraintVertical_bias="0.0" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

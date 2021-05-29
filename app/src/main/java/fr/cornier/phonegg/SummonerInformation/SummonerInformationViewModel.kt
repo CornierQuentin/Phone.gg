@@ -14,9 +14,8 @@ import com.android.volley.toolbox.Volley
 import fr.cornier.phonegg.R
 import fr.cornier.phonegg.Summoner
 import io.realm.Realm
-import org.json.JSONArray
 import org.json.JSONObject
-import java.lang.Math.round
+import kotlin.math.round
 import kotlin.math.roundToInt
 
 class SummonerInformationViewModel : ViewModel() {
@@ -35,6 +34,8 @@ class SummonerInformationViewModel : ViewModel() {
         val region = summoner?.summonerRegion
 
         val summonerId = summoner?.summonerId
+
+        val summonerAccountId = summoner?.summonerAccountId
 
         // Load the Api Key from the string.xml
         val apiKey = activityContext?.getString(R.string.api_key)
@@ -264,12 +265,16 @@ class SummonerInformationViewModel : ViewModel() {
                             winLoseRation.value = wins.toString() + "W-" + losses.toString() + "L"
                             winrate.value = ((wins fdiv (wins + losses)) * 100).roundToInt().toString() + "%"
 
-                            if (((wins fdiv (wins + losses)) * 100).roundToInt() > 50) {
-                                winrateColor.value = R.color.highWinRate
-                            } else if (((wins fdiv (wins + losses)) * 100).roundToInt() < 50) {
-                                winrateColor.value = R.color.lowWinRate
-                            } else {
-                                winrateColor.value = R.color.middleWinRate
+                            when {
+                                ((wins fdiv (wins + losses)) * 100).roundToInt() > 50 -> {
+                                    winrateColor.value = R.color.highWinRate
+                                }
+                                ((wins fdiv (wins + losses)) * 100).roundToInt() < 50 -> {
+                                    winrateColor.value = R.color.lowWinRate
+                                }
+                                else -> {
+                                    winrateColor.value = R.color.middleWinRate
+                                }
                             }
 
                             var category = ""
@@ -509,13 +514,302 @@ class SummonerInformationViewModel : ViewModel() {
 
                         }
                     },
-                    {
-                        Log.i("Test", "Error")
-                    }
+                    {   }
                 )
 
                 // Add the summonerIconRequest to the request Queue
                 requestQueue.add(summonerRankRequest)
+
+                val historyUrl = "https://$region.api.riotgames.com/lol/match/v4/matchlists/by-account/$summonerAccountId?api_key=$apiKey"
+
+                val summonerHistoryRequest = JsonObjectRequest(Request.Method.GET, historyUrl, null,
+                    { summonerHistoryJSON ->
+
+                        val matchNumber = if (summonerHistoryJSON.getJSONArray("matches").length() >= 20) {
+                            20
+                        } else  {
+                            summonerHistoryJSON.getJSONArray("matches").length()
+                        }
+
+                        if (matchNumber > 0) {
+
+                            numberLastGames.value = "Last $matchNumber"
+
+                            var wins = 0
+                            var losses = 0
+
+                            val championList: MutableList<Int> = mutableListOf()
+                            val championStatsList: MutableList<MutableList<Int>> = mutableListOf()
+                            val championWinsList: MutableList<Boolean> = mutableListOf()
+
+                            for (match in 0 until matchNumber) {
+
+                                val matchId =
+                                    summonerHistoryJSON.getJSONArray("matches").getJSONObject(match)
+                                        .getLong("gameId").toString()
+
+                                val matchUrl =
+                                    "https://$region.api.riotgames.com/lol/match/v4/matches/$matchId?api_key=$apiKey"
+
+                                val summonerMatchRequest =
+                                    JsonObjectRequest(Request.Method.GET, matchUrl, null,
+                                        { matchJSON ->
+
+                                            var participantId = 0
+
+                                            for (participantIdentities in 0 until matchJSON.getJSONArray(
+                                                "participantIdentities"
+                                            ).length()) {
+
+                                                if (matchJSON.getJSONArray("participantIdentities")
+                                                        .getJSONObject(participantIdentities)
+                                                        .getJSONObject("player")
+                                                        .getString("accountId") == summonerAccountId
+                                                ) {
+                                                    participantId = participantIdentities
+                                                }
+                                            }
+
+                                            val player = matchJSON.getJSONArray("participants")
+                                                .getJSONObject(participantId)
+
+                                            if (player.getJSONObject("stats").getBoolean("win")) {
+                                                wins++
+                                            } else {
+                                                losses++
+                                            }
+
+                                            championList.add(player.getInt("championId"))
+
+                                            val championStats:MutableList<Int> = mutableListOf(player.getJSONObject("stats").getInt("kills"), player.getJSONObject("stats").getInt("deaths"), player.getJSONObject("stats").getInt("assists"))
+                                            championStatsList.add(championStats)
+
+                                            championWinsList.add(player.getJSONObject("stats").getBoolean("win"))
+
+                                            if (match >= matchNumber - 1) {
+
+                                                winLoseLastGames.value = "${wins}W-${losses}L"
+
+                                                val frequencyMap: MutableMap<Int, Int> = LinkedHashMap()
+
+                                                for (s in championList)
+                                                {
+                                                    var count = frequencyMap[s]
+                                                    if (count == null) count = 0
+                                                    frequencyMap[s] = count + 1
+                                                }
+
+                                                val champMap = frequencyMap.entries.sortedByDescending { it.value }.associate { it.toPair() }
+
+                                                val firstChampId = champMap.keys.elementAt(0)
+                                                val secondChampId = champMap.keys.elementAt(1)
+                                                val thirdChampId = champMap.keys.elementAt(2)
+
+                                                var firstChampKills = 0
+                                                var firstChampDeaths = 0
+                                                var firstChampAssists = 0
+
+                                                var firstChampWin = 0
+                                                var firstChampLosses = 0
+
+                                                var secondChampKills = 0
+                                                var secondChampDeaths = 0
+                                                var secondChampAssists = 0
+
+                                                var secondChampWin = 0
+                                                var secondChampLosses = 0
+
+                                                var thirdChampKills = 0
+                                                var thirdChampDeaths = 0
+                                                var thirdChampAssists = 0
+
+                                                var thirdChampWin = 0
+                                                var thirdChampLosses = 0
+
+                                                for (champion in 0 until championList.size) {
+                                                    when {
+                                                        championList[champion] == firstChampId -> {
+
+                                                            firstChampKills += championStatsList[champion][0]
+                                                            firstChampDeaths += championStatsList[champion][1]
+                                                            firstChampAssists += championStatsList[champion][2]
+
+                                                            if (championWinsList[champion]) {
+                                                                firstChampWin++
+                                                            } else {
+                                                                firstChampLosses++
+                                                            }
+                                                        }
+                                                        championList[champion] == secondChampId -> {
+
+                                                            secondChampKills += championStatsList[champion][0]
+                                                            secondChampDeaths += championStatsList[champion][1]
+                                                            secondChampAssists += championStatsList[champion][2]
+
+                                                            if (championWinsList[champion]) {
+                                                                secondChampWin++
+                                                            } else {
+                                                                secondChampLosses++
+                                                            }
+                                                        }
+                                                        championList[champion] == thirdChampId -> {
+
+                                                            thirdChampKills += championStatsList[champion][0]
+                                                            thirdChampDeaths += championStatsList[champion][1]
+                                                            thirdChampAssists += championStatsList[champion][2]
+
+                                                            if (championWinsList[champion]) {
+                                                                thirdChampWin++
+                                                            } else {
+                                                                thirdChampLosses++
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                firstChampWinLose.value = "${firstChampWin}W-${firstChampLosses}L"
+                                                firstChampWinrate.value = ((firstChampWin fdiv (firstChampWin + firstChampLosses)) * 100).roundToInt().toString() + "%"
+                                                val firstKDA = (firstChampKills + firstChampAssists) fdiv firstChampDeaths
+                                                firstChampKDA.value = "%.2f KDA".format(firstKDA)
+
+                                                when {
+                                                    ((firstChampWin fdiv (firstChampWin + firstChampLosses)) * 100) > 50 -> {
+                                                        firstChampWinrateColor.value = R.color.highWinRate
+                                                    }
+                                                    ((firstChampWin fdiv (firstChampWin + firstChampLosses)) * 100) < 50 -> {
+                                                        firstChampWinrateColor.value = R.color.lowWinRate
+                                                    }
+                                                    else -> {
+                                                        firstChampWinrateColor.value = R.color.middleWinRate
+                                                    }
+                                                }
+
+                                                when {
+                                                    firstKDA >= 2 && firstKDA < 4 -> {
+                                                        firstChampKDAColor.value = R.color.middleLowKDA
+                                                    }
+                                                    firstKDA >= 4 && firstKDA < 10 -> {
+                                                        firstChampKDAColor.value = R.color.middleHighKDA
+                                                    }
+                                                    firstKDA >= 10 -> {
+                                                        firstChampKDAColor.value = R.color.highKDA
+                                                    }
+                                                    else -> {
+                                                        firstChampKDAColor.value = R.color.lowKDA
+                                                    }
+                                                }
+
+                                                secondChampWinLose.value = "${secondChampWin}W-${secondChampLosses}L"
+                                                secondChampWinrate.value = ((secondChampWin fdiv (secondChampWin + secondChampLosses)) * 100).roundToInt().toString() + "%"
+                                                val secondKDA = (secondChampKills + secondChampAssists) fdiv secondChampDeaths
+                                                secondChampKDA.value = "%.2f KDA".format(secondKDA)
+
+                                                when {
+                                                    ((secondChampWin fdiv (secondChampWin + secondChampLosses)) * 100) > 50 -> {
+                                                        secondChampWinrateColor.value = R.color.highWinRate
+                                                    }
+                                                    ((secondChampWin fdiv (secondChampWin + secondChampLosses)) * 100) < 50 -> {
+                                                        secondChampWinrateColor.value = R.color.lowWinRate
+                                                    }
+                                                    else -> {
+                                                        secondChampWinrateColor.value = R.color.middleWinRate
+                                                    }
+                                                }
+
+                                                when {
+                                                    secondKDA >= 2 && secondKDA < 4 -> {
+                                                        secondChampKDAColor.value = R.color.middleLowKDA
+                                                    }
+                                                    secondKDA >= 4 && secondKDA < 10 -> {
+                                                        secondChampKDAColor.value = R.color.middleHighKDA
+                                                    }
+                                                    secondKDA >= 10 -> {
+                                                        secondChampKDAColor.value = R.color.highKDA
+                                                    }
+                                                    else -> {
+                                                        secondChampKDAColor.value = R.color.lowKDA
+                                                    }
+                                                }
+
+                                                thirdChampWinLose.value = "${thirdChampWin}W-${thirdChampLosses}L"
+                                                thirdChampWinrate.value = ((thirdChampWin fdiv (thirdChampWin + thirdChampLosses)) * 100).roundToInt().toString() + "%"
+                                                val thirdKDA = (thirdChampKills + thirdChampAssists) fdiv thirdChampDeaths
+                                                thirdChampKDA.value = "%.2f KDA".format(thirdKDA)
+
+                                                when {
+                                                    ((thirdChampWin fdiv (thirdChampWin + thirdChampLosses)) * 100) > 50 -> {
+                                                        thirdChampWinrateColor.value = R.color.highWinRate
+                                                    }
+                                                    ((thirdChampWin fdiv (thirdChampWin + thirdChampLosses)) * 100) < 50 -> {
+                                                        thirdChampWinrateColor.value = R.color.lowWinRate
+                                                    }
+                                                    else -> {
+                                                        thirdChampWinrateColor.value = R.color.middleWinRate
+                                                    }
+                                                }
+
+                                                when {
+                                                    thirdKDA >= 2 && thirdKDA < 4 -> {
+                                                        thirdChampKDAColor.value = R.color.middleLowKDA
+                                                    }
+                                                    thirdKDA >= 4 && thirdKDA < 10 -> {
+                                                        thirdChampKDAColor.value = R.color.middleHighKDA
+                                                    }
+                                                    thirdKDA >= 10 -> {
+                                                        thirdChampKDAColor.value = R.color.highKDA
+                                                    }
+                                                    else -> {
+                                                        thirdChampKDAColor.value = R.color.lowKDA
+                                                    }
+                                                }
+
+                                                val firstChampUrl = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/$firstChampId.png"
+
+                                                val summonerFirstChampRequest = ImageRequest(
+                                                    firstChampUrl,
+                                                    {bitmap ->
+                                                        firstChamp.value = bitmap
+                                                    },0,0,null,null,
+                                                    {  }
+                                                )
+
+                                                requestQueue.add(summonerFirstChampRequest)
+
+                                                val secondChampUrl = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/$secondChampId.png"
+
+                                                val summonerSecondChampRequest = ImageRequest(
+                                                    secondChampUrl,
+                                                    {bitmap ->
+                                                        secondChamp.value = bitmap
+                                                    },0,0,null,null,
+                                                    {  }
+                                                )
+
+                                                requestQueue.add(summonerSecondChampRequest)
+
+                                                val thirdChampUrl = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/$thirdChampId.png"
+
+                                                val summonerThirdChampRequest = ImageRequest(
+                                                    thirdChampUrl,
+                                                    {bitmap ->
+                                                        thirdChamp.value = bitmap
+                                                    },0,0,null,null,
+                                                    {  }
+                                                )
+
+                                                requestQueue.add(summonerThirdChampRequest)
+
+                                            }
+                                        }, {})
+
+                                requestQueue.add(summonerMatchRequest)
+                            }
+                        } else {
+                            TODO("No Last Game")
+                        }
+                    }, {  })
+
+                requestQueue.add(summonerHistoryRequest)
 
             }, {
                 summonerMainInformation.value = null
@@ -548,6 +842,26 @@ class SummonerInformationViewModel : ViewModel() {
     val winLoseRation = MutableLiveData<String>()
     val winrate = MutableLiveData<String>()
     val winrateColor = MutableLiveData<Int>()
+    val winLoseLastGames = MutableLiveData<String>()
+    val numberLastGames = MutableLiveData<String>()
+    val firstChampWinLose = MutableLiveData<String>()
+    val firstChamp = MutableLiveData<Bitmap>()
+    val firstChampWinrate = MutableLiveData<String>()
+    val firstChampKDA = MutableLiveData<String>()
+    val firstChampWinrateColor = MutableLiveData<Int>()
+    val firstChampKDAColor = MutableLiveData<Int>()
+    val secondChampWinLose = MutableLiveData<String>()
+    val secondChamp = MutableLiveData<Bitmap>()
+    val secondChampWinrate = MutableLiveData<String>()
+    val secondChampKDA = MutableLiveData<String>()
+    val secondChampWinrateColor = MutableLiveData<Int>()
+    val secondChampKDAColor = MutableLiveData<Int>()
+    val thirdChampWinLose = MutableLiveData<String>()
+    val thirdChamp = MutableLiveData<Bitmap>()
+    val thirdChampWinrate = MutableLiveData<String>()
+    val thirdChampKDA = MutableLiveData<String>()
+    val thirdChampWinrateColor = MutableLiveData<Int>()
+    val thirdChampKDAColor = MutableLiveData<Int>()
 
     val unranked = MutableLiveData<Boolean>()
     val noMasteries = MutableLiveData<Boolean>()
