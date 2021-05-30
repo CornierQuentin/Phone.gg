@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:backgroundTint="@color/background"
+    android:visibility="visible"
+    tools:context=".MainActivity"
+    tools:visibility="visible">
+
+    <androidx.drawerlayout.widget.DrawerLayout
+
+        android:id="@+id/drawerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:openDrawer="start"
+        tools:visibility="visible">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            android:backgroundTint="@color/background">
+
+            <ImageView
+                android:id="@+id/homeButton"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:elevation="2dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.973"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.026"
+                app:srcCompat="@drawable/logo" />
+
+            <ImageView
+                android:id="@+id/drawerButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:elevation="2dp"
+                app:layout_constraintBottom_toBottomOf="@+id/homeButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.03"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/homeButton"
+                app:srcCompat="@drawable/ic_baseline_menu_24" />
+
+            <TextView
+                android:id="@+id/pageTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/big_jhon_regular"
+                android:text="History"
+                android:textColor="@color/primaryText"
+                android:textSize="28sp"
+                app:layout_constraintBottom_toBottomOf="@+id/homeButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/homeButton" />
+
+            <TextView
+                android:id="@+id/summonerNameText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textColor="@color/primaryText"
+                android:textSize="34sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pageTitle" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigationView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/cards"
+            android:visibility="visible"
+            app:headerLayout="@layout/header_navigation_drawer"
+            app:itemIconSize="30dp"
+            app:itemIconTint="@color/primaryText"
+            app:itemTextAppearance="@style/NavDrawerTextStyle"
+            app:itemTextColor="@color/primaryText"
+            app:menu="@menu/navigation_drawer"
+            tools:visibility="gone" />
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

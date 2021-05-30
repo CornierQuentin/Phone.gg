@@ -15,12 +15,11 @@ import fr.cornier.phonegg.R
 import fr.cornier.phonegg.Summoner
 import io.realm.Realm
 import org.json.JSONObject
-import kotlin.math.round
 import kotlin.math.roundToInt
 
 class SummonerInformationViewModel : ViewModel() {
 
-    infix fun Int.fdiv(i: Int): Double = this / i.toDouble();
+    private infix fun Int.fdiv(i: Int): Double = this / i.toDouble()
 
     private lateinit var requestQueue: RequestQueue
 
@@ -426,14 +425,10 @@ class SummonerInformationViewModel : ViewModel() {
                             val rankIconUrl =
                                 "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_baseface_matte.png"
 
-                            var iconRankBorderCrownUrl = ""
-
-                            if (!supraMaster) {
-                                iconRankBorderCrownUrl =
-                                    "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_crown_d$tier.png"
+                            val iconRankBorderCrownUrl = if (!supraMaster) {
+                                "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_crown_d$tier.png"
                             } else {
-                                iconRankBorderCrownUrl =
-                                    "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_crown.png"
+                                "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/content/src/leagueclient/rankedcrests/$category/images/${subCategory}_crown.png"
                             }
 
                             val iconRankBorderWingUrl =
@@ -532,6 +527,8 @@ class SummonerInformationViewModel : ViewModel() {
                         }
 
                         if (matchNumber > 0) {
+
+                            noLastGame.value = false
 
                             numberLastGames.value = "Last $matchNumber"
 
@@ -805,9 +802,11 @@ class SummonerInformationViewModel : ViewModel() {
                                 requestQueue.add(summonerMatchRequest)
                             }
                         } else {
-                            TODO("No Last Game")
+                            noLastGame.value = true
                         }
-                    }, {  })
+                    }, {
+                        noLastGame.value = true
+                    })
 
                 requestQueue.add(summonerHistoryRequest)
 
@@ -865,4 +864,5 @@ class SummonerInformationViewModel : ViewModel() {
 
     val unranked = MutableLiveData<Boolean>()
     val noMasteries = MutableLiveData<Boolean>()
+    val noLastGame = MutableLiveData<Boolean>()
 }

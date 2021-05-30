@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/Home"
+            android:icon="@drawable/ic_baseline_home_24"
+            android:title="Home"
+            android:checked="false"
+            android:checkable="false"/>
+    </group>
+
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/Summoner"
+            android:icon="@drawable/ic_round_account_circle_24"
+            android:title="Summoner"
+            android:checked="false"
+            android:checkable="false"/>
+        <item
+            android:id="@+id/History"
+            android:icon="@drawable/ic_baseline_format_list_bulleted_24"
+            android:title="History"
+            android:checked="false"
+            android:checkable="false"/>
+        <item
+            android:id="@+id/Stats"
+            android:icon="@drawable/ic_baseline_equalizer_24"
+            android:title="Stats"
+            android:checked="false"
+            android:checkable="false"/>
+    </group>
+</menu>

@@ -29,4 +29,6 @@
     <color name="middleHighKDA">#dbb074</color>
     <color name="highKDA">#DD862F</color>
 
+    <color name="drawerShadow">#66000000</color>
+
 </resources>

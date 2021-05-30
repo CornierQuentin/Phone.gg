@@ -4,11 +4,11 @@
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/mainColor</item>
         <item name="colorPrimaryVariant">@color/mainColor</item>
-        <item name="colorOnPrimary">@color/background</item>
+        <item name="colorOnPrimary">@color/mainColor</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/mainColor</item>
         <item name="colorSecondaryVariant">@color/mainColor</item>
-        <item name="colorOnSecondary">@color/background</item>
+        <item name="colorOnSecondary">@color/mainColor</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/background</item>
         <!-- Customize your theme here. -->
@@ -23,6 +23,11 @@
     <style name="ThemeOverlay.App.TextInputLayout" parent="">
         <item name="colorSurface">@color/background</item>
         ...
+    </style>
+
+    <style name="NavDrawerTextStyle" parent="Base.TextAppearance.AppCompat">
+        <item name="android:textColor">@color/primaryText</item>
+        <item name="android:textSize">24sp</item>
     </style>
 
 </resources>

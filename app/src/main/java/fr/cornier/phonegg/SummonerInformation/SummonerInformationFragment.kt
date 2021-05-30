@@ -1,22 +1,26 @@
 package fr.cornier.phonegg.SummonerInformation
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import fr.cornier.phonegg.AddSummonerPage.AddSummonerViewModel
+import fr.cornier.phonegg.AddSummonerPage.AddSummonerFragment
+import fr.cornier.phonegg.AddSummonerPage.AddSummonerFragmentDirections
+import fr.cornier.phonegg.HomePage.HomeFragmentDirections
 import fr.cornier.phonegg.R
-import fr.cornier.phonegg.databinding.FragmentHomeBinding
+import fr.cornier.phonegg.Stats.StatsFragmentDirections
 import fr.cornier.phonegg.databinding.FragmentSummonerInformationBinding
 import io.realm.Realm
-import kotlinx.android.synthetic.main.fragment_add_summoner.*
-import kotlinx.android.synthetic.main.fragment_summoner_information.*
 import org.json.JSONObject
 import java.text.NumberFormat
 
@@ -34,7 +38,7 @@ class SummonerInformationFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentSummonerInformationBinding.inflate(inflater, container, false)
         return binding.root
@@ -44,6 +48,42 @@ class SummonerInformationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.homeButton.setOnClickListener { findNavController().navigate(R.id.action_summonerInformationFragment_to_homeFragment) }
+
+        binding.drawerButton.setOnClickListener { binding.drawerLayout.open() }
+
+        binding.navigationView.setNavigationItemSelectedListener { menuItem ->
+            // Handle menu item selected
+
+            if (menuItem.itemId == 2131361802) {
+                val direction: NavDirections = SummonerInformationFragmentDirections.actionSummonerInformationFragmentToHistoryFragment(args.summonerAccountId)
+
+                findNavController().navigate(direction)
+            } else if (menuItem.itemId == 2131361817) {
+                val direction: NavDirections = SummonerInformationFragmentDirections.actionSummonerInformationFragmentToStatsFragment(args.summonerAccountId)
+
+                findNavController().navigate(direction)
+            } else if (menuItem.itemId == 2131361803) {
+
+                findNavController().navigate(R.id.action_summonerInformationFragment_to_homeFragment)
+            }
+
+            binding.drawerLayout.close()
+            true
+        }
+
+        binding.drawerLayout.setScrimColor(ContextCompat.getColor(requireContext(), R.color.drawerShadow))
+
+        binding.SummonerHistoryDisplay.setOnClickListener {
+            val direction: NavDirections = SummonerInformationFragmentDirections.actionSummonerInformationFragmentToHistoryFragment(args.summonerAccountId)
+
+            findNavController().navigate(direction)
+        }
+
+        binding.SummonerMasteryDisplay.setOnClickListener {
+            val direction: NavDirections = SummonerInformationFragmentDirections.actionSummonerInformationFragmentToStatsFragment(args.summonerAccountId)
+
+            findNavController().navigate(direction)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -74,7 +114,7 @@ class SummonerInformationFragment : Fragment() {
         viewModel.winrateColor.observe(requireActivity(), { winrateColor -> setWinrateColor(winrateColor) })
         viewModel.numberLastGames.observe(requireActivity(), { numberLastGames -> setNumberLastGames(numberLastGames) })
         viewModel.winLoseLastGames.observe(requireActivity(), { winLoseLastGames -> setWinLoseLastGames(winLoseLastGames) })
-        viewModel.firstChamp.observe(requireActivity(), {firstChamp -> setfirsChamp(firstChamp) })
+        viewModel.firstChamp.observe(requireActivity(), {firstChamp -> setfirstChamp(firstChamp) })
         viewModel.firstChampWinLose.observe(requireActivity(), {firstChampWinLose -> setfirstChampWinLose(firstChampWinLose) })
         viewModel.firstChampWinrate.observe(requireActivity(), {firstChampWinrate -> setfirstChampWinrate(firstChampWinrate) })
         viewModel.firstChampKDA.observe(requireActivity(), {firstChampKDA -> setfirstChampKDA(firstChampKDA) })
@@ -95,8 +135,19 @@ class SummonerInformationFragment : Fragment() {
 
         viewModel.unranked.observe(requireActivity(), { unranked -> setUnrankedTextVisibility(unranked) })
         viewModel.noMasteries.observe(requireActivity(), { noMasteries -> setNoMasteriesTextVisibility(noMasteries)})
+        viewModel.noLastGame.observe(requireActivity(), { noLastGame -> setNoLastGame(noLastGame) })
 
         viewModel.getSummonerMainInformation(args.summonerAccountId, activity)
+    }
+
+    private fun setNoLastGame(noLastGame: Boolean?) {
+        if (noLastGame != null) {
+            if (noLastGame) {
+                binding.noLastGameText.visibility = View.VISIBLE
+            } else {
+                binding.noLastGameText.visibility = View.INVISIBLE
+            }
+        }
     }
 
     private fun setthirdChampKDAColor(thirdChampKDAColor: Int?) {
@@ -235,7 +286,7 @@ class SummonerInformationFragment : Fragment() {
         }
     }
 
-    private fun setfirsChamp(firstChamp: Bitmap?) {
+    private fun setfirstChamp(firstChamp: Bitmap?) {
         if (firstChamp != null) {
             binding.FirstChamp.setImageBitmap(firstChamp)
         } else {
@@ -460,11 +511,7 @@ class SummonerInformationFragment : Fragment() {
     }
 
     private fun setIcon(summonerIcon: Bitmap) {
-        if (summonerIcon != null) {
-            binding.SummonerIcon.setImageBitmap(summonerIcon)
-        } else {
-            binding.SummonerIcon.setImageBitmap(null)
-        }
+        binding.SummonerIcon.setImageBitmap(summonerIcon)
     }
 
     private fun showMainInformation(summonerMainInformation: JSONObject?) {
