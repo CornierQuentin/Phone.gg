@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDirections
@@ -16,6 +17,7 @@ import fr.cornier.phonegg.History.HistoryFragmentDirections
 import fr.cornier.phonegg.History.HistoryViewModel
 import fr.cornier.phonegg.R
 import fr.cornier.phonegg.StatsViewModel.StatsViewModel
+import fr.cornier.phonegg.SummonerInformation.SummonerInformationFragmentDirections
 import fr.cornier.phonegg.databinding.FragmentHistoryBinding
 import fr.cornier.phonegg.databinding.FragmentStatsBinding
 import io.realm.Realm
@@ -32,6 +34,10 @@ class StatsFragment : Fragment() {
 
     lateinit var realm: Realm
 
+    private var navigationEnable = true
+
+    private var drawerOpen = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,24 +50,44 @@ class StatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.homeButton.setOnClickListener { findNavController().navigate(R.id.action_statsFragment_to_homeFragment) }
+        binding.homeButton.setOnClickListener { if (navigationEnable) findNavController().navigate(R.id.action_summonerInformationFragment_to_homeFragment) }
 
-        binding.drawerButton.setOnClickListener { binding.drawerLayout.open() }
+        binding.drawerButton.setOnClickListener {
+            if (navigationEnable) {
+                drawerOpen = true
+                binding.drawerLayout.open()
+                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        if (drawerOpen) {
+                            binding.drawerLayout.close()
+                            drawerOpen = false
+                        } else {
+                            isEnabled = false
+                            activity?.onBackPressed()
+                        }
+                    }
+                })
+            }
+        }
 
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
             // Handle menu item selected
 
-            if (menuItem.itemId == 2131361818) {
-                val direction: NavDirections = StatsFragmentDirections.actionStatsFragmentToHistoryFragment(args.summonerAccountId)
+            when (menuItem.title) {
+                "Summoner" -> {
+                    val direction: NavDirections = StatsFragmentDirections.actionStatsFragmentToSummonerInformationFragment(args.summonerAccountId)
 
-                findNavController().navigate(direction)
-            } else if (menuItem.itemId == 2131361802) {
-                val direction: NavDirections = StatsFragmentDirections.actionStatsFragmentToSummonerInformationFragment(args.summonerAccountId)
+                    findNavController().navigate(direction)
+                }
+                "History" -> {
+                    val direction: NavDirections = StatsFragmentDirections.actionStatsFragmentToHistoryFragment(args.summonerAccountId)
 
-                findNavController().navigate(direction)
-            } else if (menuItem.itemId == 2131361803) {
+                    findNavController().navigate(direction)
+                }
+                "Home" -> {
 
-                findNavController().navigate(R.id.action_statsFragment_to_homeFragment)
+                    findNavController().navigate(R.id.action_statsFragment_to_homeFragment)
+                }
             }
 
             binding.drawerLayout.close()

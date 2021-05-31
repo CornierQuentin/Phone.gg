@@ -1,7 +1,10 @@
 package fr.cornier.phonegg.SummonerInformation
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -49,7 +52,7 @@ class SummonerInformationViewModel : ViewModel() {
                 val summonerIconId = summonerJSON.getInt("profileIconId")
 
                 // Prepare the url for the request, changing the summoner icon id
-                val iconUrl = "http://ddragon.leagueoflegends.com/cdn/11.10.1/img/profileicon/$summonerIconId.png"
+                val iconUrl = "https://ddragon.leagueoflegends.com/cdn/11.10.1/img/profileicon/$summonerIconId.png"
                 val rankUrl = "https://$region.api.riotgames.com/lol/league/v4/entries/by-summoner/$summonerId?api_key=$apiKey"
                 val masteryURL = "https://$region.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/$summonerId?api_key=$apiKey"
 
@@ -60,7 +63,9 @@ class SummonerInformationViewModel : ViewModel() {
                     {bitmap ->
                         summonerIcon.value = bitmap
                     },0,0,null,null,
-                    {  }
+                    {
+                        summonerIcon.value = BitmapFactory.decodeResource(activityContext?.resources, R.drawable.default_icon)
+                    }
                 )
 
                 // Add the summonerIconRequest to the request Queue

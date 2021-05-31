@@ -1,11 +1,13 @@
 package fr.cornier.phonegg.HomePage
 
 import android.annotation.SuppressLint
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -16,6 +18,7 @@ import com.android.volley.toolbox.ImageRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import de.hdodenhof.circleimageview.CircleImageView
+import fr.cornier.phonegg.MainActivity
 import fr.cornier.phonegg.R
 import fr.cornier.phonegg.Summoner
 import io.realm.Realm
@@ -128,7 +131,7 @@ class SummonerAdapter(private val registeredSummonerNumber : Int, val summonerLi
                 val summonerIconId = summonerJSON.getInt("profileIconId")
 
                 // Prepare the url for the request, changing the summoner icon id
-                val iconUrl = "http://ddragon.leagueoflegends.com/cdn/11.10.1/img/profileicon/$summonerIconId.png"
+                val iconUrl = "https://ddragon.leagueoflegends.com/cdn/11.10.1/img/profileicon/$summonerIconId.png"
 
                 // Prepare the GET request with the url and if it succeed, change summonerIcon
                 // value to the bitmap response and if it fail change summonerIcon to null
@@ -136,8 +139,11 @@ class SummonerAdapter(private val registeredSummonerNumber : Int, val summonerLi
                     iconUrl,
                     {bitmap ->
                         homeSummonerIcon.setImageBitmap(bitmap)
+                        (parentFragment.activity as MainActivity).setNavStatus(true)
                     },0,0,null,null,
-                    {  }
+                    {
+                        homeSummonerIcon.setImageBitmap(BitmapFactory.decodeResource(parentFragment.requireContext().resources, R.drawable.default_icon))
+                    }
                 )
 
                 // Add the summonerIconRequest to the request Queue
@@ -146,11 +152,25 @@ class SummonerAdapter(private val registeredSummonerNumber : Int, val summonerLi
             }, {  })
 
             // Add the summonerRequest to the request Queue
+            (parentFragment.activity as MainActivity).setNavStatus(false)
             requestQueue.add(summonerRequest)
 
             homeSummonerDisplay.setOnClickListener { onHomeSummonerDisplayClick(position, false) }
 
-            homeSummonerDisplay.setOnLongClickListener{
+            homeSummonerDisplay.setOnLongClickListener {
+
+                parentFragment.requireActivity().onBackPressedDispatcher.addCallback(parentFragment, object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        homeSummonerIcon.visibility = View.VISIBLE
+                        homeSummonerName.visibility = View.VISIBLE
+                        deleteIcon.visibility = View.INVISIBLE
+
+                        homeSummonerDisplay.setBackgroundResource(R.drawable.summoner_display_shape)
+
+                        homeSummonerDisplay.setOnClickListener { onHomeSummonerDisplayClick(position, false) }
+                    }
+                })
+
                 homeSummonerIcon.visibility = View.INVISIBLE
                 homeSummonerName.visibility = View.INVISIBLE
                 deleteIcon.visibility = View.VISIBLE
@@ -176,7 +196,7 @@ class SummonerAdapter(private val registeredSummonerNumber : Int, val summonerLi
         }
     }
 
-    private fun onHomeSummonerDisplayClick(summoner: Int, deleteSummoner:Boolean) {
+    fun onHomeSummonerDisplayClick(summoner: Int, deleteSummoner:Boolean) {
         if(!deleteSummoner) {
 
             val direction:NavDirections =

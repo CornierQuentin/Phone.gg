@@ -5,14 +5,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.toolbox.Volley
+import fr.cornier.phonegg.HomePage.SummonerAdapter
 import fr.cornier.phonegg.R
 import fr.cornier.phonegg.Stats.StatsFragmentDirections
+import fr.cornier.phonegg.Summoner
 import fr.cornier.phonegg.SummonerInformation.SummonerInformationFragmentDirections
 import fr.cornier.phonegg.databinding.FragmentHistoryBinding
 import io.realm.Realm
@@ -29,6 +34,10 @@ class HistoryFragment : Fragment() {
 
     lateinit var realm: Realm
 
+    private var navigationEnable = true
+
+    private var drawerOpen = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,24 +50,46 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.homeButton.setOnClickListener { findNavController().navigate(R.id.action_historyFragment_to_homeFragment) }
+        realm = Realm.getDefaultInstance()
 
-        binding.drawerButton.setOnClickListener { binding.drawerLayout.open() }
+        binding.homeButton.setOnClickListener { if (navigationEnable) findNavController().navigate(R.id.action_summonerInformationFragment_to_homeFragment) }
+
+        binding.drawerButton.setOnClickListener {
+            if (navigationEnable) {
+                drawerOpen = true
+                binding.drawerLayout.open()
+                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        if (drawerOpen) {
+                            binding.drawerLayout.close()
+                            drawerOpen = false
+                        } else {
+                            isEnabled = false
+                            activity?.onBackPressed()
+                        }
+                    }
+                })
+            }
+        }
 
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
             // Handle menu item selected
 
-            if (menuItem.itemId == 2131361818) {
-                val direction: NavDirections = HistoryFragmentDirections.actionHistoryFragmentToSummonerInformationFragment(args.summonerAccountId)
+            when (menuItem.title) {
+                "Summoner" -> {
+                    val direction: NavDirections = HistoryFragmentDirections.actionHistoryFragmentToSummonerInformationFragment(args.summonerAccountId)
 
-                findNavController().navigate(direction)
-            } else if (menuItem.itemId == 2131361817) {
-                val direction: NavDirections = HistoryFragmentDirections.actionHistoryFragmentToStatsFragment(args.summonerAccountId)
+                    findNavController().navigate(direction)
+                }
+                "Stats" -> {
+                    val direction: NavDirections = HistoryFragmentDirections.actionHistoryFragmentToStatsFragment(args.summonerAccountId)
 
-                findNavController().navigate(direction)
-            } else if (menuItem.itemId == 2131361803) {
+                    findNavController().navigate(direction)
+                }
+                "Home" -> {
 
-                findNavController().navigate(R.id.action_historyFragment_to_homeFragment)
+                    findNavController().navigate(R.id.action_historyFragment_to_homeFragment)
+                }
             }
 
             binding.drawerLayout.close()
@@ -71,20 +102,26 @@ class HistoryFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.summonerMainInformation.observe(requireActivity()) { summonerMainInformation ->
-            setSummonerMainInformation(
-                summonerMainInformation
+        viewModel.matchList.observe(requireActivity()) { matchList ->
+            configureRecyclerView(
+                matchList
             )
         }
 
         viewModel.getSummonerMainInformation(args.summonerAccountId, activity)
     }
 
-    private fun setSummonerMainInformation(summonerInformation: JSONObject?) {
-        if (summonerInformation != null) {
-            binding.summonerNameText.text = summonerInformation.getString("name")
-        } else {
-            binding.summonerNameText.text = null
+    private fun configureRecyclerView(matchList: JSONObject?) {
+        if (matchList != null) {
+
+            val summoner = realm.where(Summoner::class.java).equalTo("summonerAccountId", args.summonerAccountId).findFirst()
+
+            val region = summoner!!.summonerRegion
+
+            val historyAdapter = HistoryAdapter(matchList, args.summonerAccountId, region, this)
+
+            binding.history.adapter = historyAdapter
+            binding.history.layoutManager = LinearLayoutManager(activity)
         }
     }
 }

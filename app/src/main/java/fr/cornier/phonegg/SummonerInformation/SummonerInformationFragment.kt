@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import androidx.navigation.fragment.navArgs
 import fr.cornier.phonegg.AddSummonerPage.AddSummonerFragment
 import fr.cornier.phonegg.AddSummonerPage.AddSummonerFragmentDirections
 import fr.cornier.phonegg.HomePage.HomeFragmentDirections
+import fr.cornier.phonegg.MainActivity
 import fr.cornier.phonegg.R
 import fr.cornier.phonegg.Stats.StatsFragmentDirections
 import fr.cornier.phonegg.databinding.FragmentSummonerInformationBinding
@@ -35,6 +37,10 @@ class SummonerInformationFragment : Fragment() {
 
     lateinit var realm: Realm
 
+    private var navigationEnable = false
+
+    private var drawerOpen = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,24 +53,46 @@ class SummonerInformationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.homeButton.setOnClickListener { findNavController().navigate(R.id.action_summonerInformationFragment_to_homeFragment) }
+        (activity as MainActivity).setNavStatus(false)
 
-        binding.drawerButton.setOnClickListener { binding.drawerLayout.open() }
+        binding.homeButton.setOnClickListener { if (navigationEnable) findNavController().navigate(R.id.action_summonerInformationFragment_to_homeFragment) }
+
+        binding.drawerButton.setOnClickListener {
+            if (navigationEnable) {
+                drawerOpen = true
+                binding.drawerLayout.open()
+                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        if (drawerOpen) {
+                            binding.drawerLayout.close()
+                            drawerOpen = false
+                        } else {
+                            isEnabled = false
+                            activity?.onBackPressed()
+                        }
+                    }
+                })
+            }
+        }
 
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
             // Handle menu item selected
 
-            if (menuItem.itemId == 2131361802) {
-                val direction: NavDirections = SummonerInformationFragmentDirections.actionSummonerInformationFragmentToHistoryFragment(args.summonerAccountId)
+            when (menuItem.title) {
+                "History" -> {
+                    val direction: NavDirections = SummonerInformationFragmentDirections.actionSummonerInformationFragmentToHistoryFragment(args.summonerAccountId)
 
-                findNavController().navigate(direction)
-            } else if (menuItem.itemId == 2131361817) {
-                val direction: NavDirections = SummonerInformationFragmentDirections.actionSummonerInformationFragmentToStatsFragment(args.summonerAccountId)
+                    findNavController().navigate(direction)
+                }
+                "Stats" -> {
+                    val direction: NavDirections = SummonerInformationFragmentDirections.actionSummonerInformationFragmentToStatsFragment(args.summonerAccountId)
 
-                findNavController().navigate(direction)
-            } else if (menuItem.itemId == 2131361803) {
+                    findNavController().navigate(direction)
+                }
+                "Home" -> {
 
-                findNavController().navigate(R.id.action_summonerInformationFragment_to_homeFragment)
+                    findNavController().navigate(R.id.action_summonerInformationFragment_to_homeFragment)
+                }
             }
 
             binding.drawerLayout.close()
@@ -74,15 +102,25 @@ class SummonerInformationFragment : Fragment() {
         binding.drawerLayout.setScrimColor(ContextCompat.getColor(requireContext(), R.color.drawerShadow))
 
         binding.SummonerHistoryDisplay.setOnClickListener {
-            val direction: NavDirections = SummonerInformationFragmentDirections.actionSummonerInformationFragmentToHistoryFragment(args.summonerAccountId)
+            if (navigationEnable) {
+                val direction: NavDirections =
+                    SummonerInformationFragmentDirections.actionSummonerInformationFragmentToHistoryFragment(
+                        args.summonerAccountId
+                    )
 
-            findNavController().navigate(direction)
+                findNavController().navigate(direction)
+            }
         }
 
         binding.SummonerMasteryDisplay.setOnClickListener {
-            val direction: NavDirections = SummonerInformationFragmentDirections.actionSummonerInformationFragmentToStatsFragment(args.summonerAccountId)
+            if (navigationEnable) {
+                val direction: NavDirections =
+                    SummonerInformationFragmentDirections.actionSummonerInformationFragmentToStatsFragment(
+                        args.summonerAccountId
+                    )
 
-            findNavController().navigate(direction)
+                findNavController().navigate(direction)
+            }
         }
     }
 
@@ -273,9 +311,16 @@ class SummonerInformationFragment : Fragment() {
     private fun setthirdChamp(thirdChamp: Bitmap?) {
         if (thirdChamp != null) {
             binding.ThirdChamp.setImageBitmap(thirdChamp)
+
+            enableNavigation()
         } else {
             binding.ThirdChamp.setImageBitmap(null)
         }
+    }
+
+    private fun enableNavigation() {
+        navigationEnable = true
+        (activity as MainActivity).setNavStatus(true)
     }
 
     private fun setsecondChamp(secondChamp: Bitmap?) {

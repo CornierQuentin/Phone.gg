@@ -53,7 +53,7 @@ class AddSummonerViewModel : ViewModel() {
             val summonerIconId = summonerJSON.getInt("profileIconId")
 
             // Prepare the url for the request, changing the summoner icon id
-            val iconUrl = "http://ddragon.leagueoflegends.com/cdn/11.10.1/img/profileicon/$summonerIconId.png"
+            val iconUrl = "https://ddragon.leagueoflegends.com/cdn/11.10.1/img/profileicon/$summonerIconId.png"
 
             // Prepare the GET request with the url and if it succeed, change summonerIcon
             // value to the bitmap response and if it fail change summonerIcon to null
