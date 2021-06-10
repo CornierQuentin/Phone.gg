@@ -315,6 +315,8 @@ class SummonerInformationFragment : Fragment() {
             enableNavigation()
         } else {
             binding.ThirdChamp.setImageBitmap(null)
+
+            enableNavigation()
         }
     }
 

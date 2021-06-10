@@ -8,7 +8,7 @@
     android:background="@color/background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/homeSummonerDisplay"
+        android:id="@+id/matchDisplay"
         android:layout_width="match_parent"
         android:layout_height="130dp"
         android:layout_marginStart="8dp"

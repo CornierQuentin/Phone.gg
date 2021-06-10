@@ -12,11 +12,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import fr.cornier.phonegg.History.HistoryAdapter
 import fr.cornier.phonegg.History.HistoryFragmentArgs
 import fr.cornier.phonegg.History.HistoryFragmentDirections
 import fr.cornier.phonegg.History.HistoryViewModel
 import fr.cornier.phonegg.R
 import fr.cornier.phonegg.StatsViewModel.StatsViewModel
+import fr.cornier.phonegg.Summoner
 import fr.cornier.phonegg.SummonerInformation.SummonerInformationFragmentDirections
 import fr.cornier.phonegg.databinding.FragmentHistoryBinding
 import fr.cornier.phonegg.databinding.FragmentStatsBinding
@@ -50,7 +53,7 @@ class StatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.homeButton.setOnClickListener { if (navigationEnable) findNavController().navigate(R.id.action_summonerInformationFragment_to_homeFragment) }
+        binding.homeButton.setOnClickListener { if (navigationEnable) findNavController().navigate(R.id.action_statsFragment_to_homeFragment) }
 
         binding.drawerButton.setOnClickListener {
             if (navigationEnable) {
@@ -100,16 +103,6 @@ class StatsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.summonerMainInformation.observe(requireActivity()) { summonerMainInformation -> setSummonerMainInformation(summonerMainInformation) }
-
         viewModel.getSummonerMainInformation(args.summonerAccountId, activity)
-    }
-
-    private fun setSummonerMainInformation(summonerInformation: JSONObject?) {
-        if (summonerInformation != null) {
-            binding.summonerNameText.text = summonerInformation.getString("name")
-        } else {
-            binding.summonerNameText.text = null
-        }
     }
 }

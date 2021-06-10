@@ -1,0 +1,7 @@
+Matche:
+	- 2nd cards refirect sur une page avec les stats parr rapport aux 	ligues.
+	- 3rd and 4th cards redirect sur une page avec les stats de tous les
+	joueurs comme la cards 3.
+
+Summoner Info:
+	- Contour de l'icone du card 1 avec celui des niveaux plutôt que 	celui du rank

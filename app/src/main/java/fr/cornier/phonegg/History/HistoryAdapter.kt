@@ -4,15 +4,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.ImageRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import fr.cornier.phonegg.HomePage.HomeFragmentDirections
 import fr.cornier.phonegg.MainActivity
 import fr.cornier.phonegg.R
 import kotlinx.android.synthetic.main.cell_history.view.*
+import kotlinx.android.synthetic.main.fragment_history.view.*
 import org.json.JSONObject
 import kotlin.math.roundToInt
 
@@ -46,7 +50,7 @@ class HistoryAdapter(private val matchList: JSONObject, val summonerAccountId: S
 
             val matchId =
                 matchList.getJSONArray("matches").getJSONObject(position)
-                    .getLong("gameId").toString()
+                    .getLong("gameId")
 
             val matchUrl =
                 "https://$region.api.riotgames.com/lol/match/v4/matches/$matchId?api_key=$apiKey"
@@ -236,6 +240,13 @@ class HistoryAdapter(private val matchList: JSONObject, val summonerAccountId: S
 
                                 requestQueue.add(roleRequest)
                             }
+                        }
+
+                        itemView.matchDisplay.setOnClickListener {
+                            val direction: NavDirections =
+                                HistoryFragmentDirections.actionHistoryFragmentToMatchFragment(parentFragment.args.summonerAccountId, position)
+
+                            parentFragment.findNavController().navigate(direction)
                         }
                     }, {})
 

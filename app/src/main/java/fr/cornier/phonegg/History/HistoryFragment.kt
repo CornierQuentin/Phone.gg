@@ -25,7 +25,7 @@ import org.json.JSONObject
 
 class HistoryFragment : Fragment() {
 
-    private val args: HistoryFragmentArgs by navArgs()
+    val args: HistoryFragmentArgs by navArgs()
 
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
@@ -52,7 +52,7 @@ class HistoryFragment : Fragment() {
 
         realm = Realm.getDefaultInstance()
 
-        binding.homeButton.setOnClickListener { if (navigationEnable) findNavController().navigate(R.id.action_summonerInformationFragment_to_homeFragment) }
+        binding.homeButton.setOnClickListener { if (navigationEnable) findNavController().navigate(R.id.action_historyFragment_to_homeFragment) }
 
         binding.drawerButton.setOnClickListener {
             if (navigationEnable) {

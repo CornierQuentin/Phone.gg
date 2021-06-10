@@ -23,7 +23,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@color/background"
                 android:backgroundTint="@color/background">
 
@@ -589,7 +589,7 @@
                         android:id="@+id/noLastGameText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No Masteries"
+                        android:text="No Last Game"
                         android:textColor="@color/secondaryText"
                         android:textSize="34sp"
                         android:visibility="invisible"
