@@ -1,6 +1,6 @@
 # Phone.gg
 
-This app is an assistant fr the game league of legends
+This app is an assistant for the game league of legends
 
 ![alt text](https://github.com/CornierQuentin/Phone.gg/blob/main/ScreenShot/home.png "Image montrant la page d'accueil de l'application")
 ![alt text](https://github.com/CornierQuentin/Phone.gg/blob/main/ScreenShot/SummonerInfo.png "Image montrant la page avec les informations sur lee joueur")
