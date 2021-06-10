@@ -1,7 +1,7 @@
 <resources>
     <!-- App String -->
     <string name="app_name">Phone.gg</string>
-    <string name="api_key">RGAPI-8e18064f-73cf-4827-9b17-e4d127d81028</string>
+    <string name="api_key">YOUR API-KEY</string>
 
     <!-- Home Page String -->
     <string name="welcomeText">Welcome to</string>
