@@ -2,7 +2,7 @@
 
 This app is an assistant for the game league of legends
 
-!![alt text](https://github.com/CornierQuentin/Phone.gg/blob/main/ScreenShot/home.png "Image montrant la page d'accueil de l'application")
+![alt text](https://github.com/CornierQuentin/Phone.gg/blob/main/ScreenShot/home.png "Image montrant la page d'accueil de l'application")
 
 Home page of the app where the user can add, delete and choose a summoner that they want to know the statistic.
 
